@@ -11,14 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Workshop {
 
     @EqualsAndHashCode.Include
     private int id;
-    private String nombre;
-    private String email;
-    private String fechaRegistro;
-    private String tipoUsuario;
-    private String fotoPerfil;
+    private String title;
+    private String urlImage;
+    private int duration;
+    private int type;
+    private String date;
+    private String description;
 
 }

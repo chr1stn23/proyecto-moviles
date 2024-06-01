@@ -11,14 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Notifications {
 
     @EqualsAndHashCode.Include
     private int id;
-    private String nombre;
-    private String email;
-    private String fechaRegistro;
-    private String tipoUsuario;
-    private String fotoPerfil;
+    private String message;
+    private String sendDate;
+    private String event;
 
 }
