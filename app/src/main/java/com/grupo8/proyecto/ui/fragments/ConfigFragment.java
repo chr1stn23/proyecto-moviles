@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.grupo8.proyecto.MainActivity;
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.User;
 import com.squareup.picasso.Picasso;
@@ -29,6 +31,7 @@ public class ConfigFragment extends Fragment {
     private RequestQueue requestQueue;
     private TextView userName, userEmail, userRegistrationDate, userType;
     private ImageView profileImage;
+    private Button cerrarSesionButton;
 
     @Nullable
     @Override
@@ -40,9 +43,17 @@ public class ConfigFragment extends Fragment {
         userRegistrationDate = view.findViewById(R.id.user_registration_date);
         userType = view.findViewById(R.id.user_type);
         profileImage = view.findViewById(R.id.profile_image);
+        cerrarSesionButton = view.findViewById(R.id.btn_cerrar_sesion);
 
         requestQueue = Volley.newRequestQueue(requireContext());
         fetchUserData();
+
+        cerrarSesionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cerrarSesion();
+            }
+        });
 
         return view;
     }
@@ -99,5 +110,11 @@ public class ConfigFragment extends Fragment {
         userRegistrationDate.setText("Fecha de Registro: " + user.getFechaRegistro());
         userType.setText("Tipo de Usuario: " + user.getTipoUsuario());
         Picasso.get().load(user.getFotoPerfil()).into(profileImage);
+    }
+
+    private void cerrarSesion() {
+        // Llamar al método de cerrar sesión en MainActivity
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        mainActivity.cerrarSesion();
     }
 }

@@ -36,7 +36,7 @@ import org.json.JSONObject;
 import java.net.HttpURLConnection;
 
 
-public class MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     private RequestQueue requestQueue;
@@ -84,6 +84,16 @@ public class MainActivity extends AppCompatActivity {
     private boolean sesionActiva(){
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         return prefs.getBoolean("sesionIniciada", false);
+    }
+    public void cerrarSesion() {
+        SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("sesionIniciada", false);
+        editor.apply();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();  // Cierra MainActivity y redirige al LoginActivity
     }
 
 
