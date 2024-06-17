@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:id="@+id/blogThumbnail"
+        android:id="@+id/workshopThumbnail"
         android:src="@drawable/workshop_thumbnail_bg_red"
         android:scaleType="centerCrop"/>
 

@@ -1,5 +1,7 @@
 package com.grupo8.proyecto.data;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Workshop {
+public class Workshop implements Serializable {
 
     @EqualsAndHashCode.Include
     private int id;
@@ -21,8 +22,9 @@ public class Workshop {
     private int type;
     private String date;
     private String description;
+    private String ubication;
 
-    public Workshop(int id, String title, String urlImage, int duration, int type, String date, String description) {
+    public Workshop(int id, String title, String urlImage, int duration, int type, String date, String description, String ubication) {
         this.id = id;
         this.title = title;
         this.urlImage = urlImage;
@@ -30,6 +32,15 @@ public class Workshop {
         this.type = type;
         this.date = date;
         this.description = description;
+        this.ubication = ubication;
+    }
+
+    public String getUbication() {
+        return ubication;
+    }
+
+    public void setUbication(String ubication) {
+        this.ubication = ubication;
     }
 
     public int getId() {

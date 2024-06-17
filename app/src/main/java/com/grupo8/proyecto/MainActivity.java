@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             if (item.getItemId() == R.id.home){
                 cambiarFragment(new InicioFragment());
             } else if (item.getItemId() == R.id.cursos) {
-                cambiarFragment(new CursosFragment());
+                cambiarFragment(new WorkshopDetFragment());
             } else if (item.getItemId() == R.id.miscursos) {
                 cambiarFragment(new MisCursosFragment());
             } else if (item.getItemId() == R.id.config) {
