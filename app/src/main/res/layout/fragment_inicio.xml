@@ -3,15 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#95F6BC"
     tools:context=".ui.fragments.InicioFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Inicio Fragmento"
-        android:textColor="@color/black"
-        android:textSize="26sp" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme" >
 
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inicio - Blogs"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:layout_gravity="center" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <SearchView
+            android:id="@+id/busqueda"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_margin="10sp"
+            android:queryHint="Buscar por Titulo o Autor" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/homeRecyclerView"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            />
+    </LinearLayout>
 </FrameLayout>
