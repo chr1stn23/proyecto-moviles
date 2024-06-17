@@ -1,17 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#AA95F6"
-    tools:context=".ui.fragments.ConfigFragment">
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true"
+    android:paddingTop="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#000000">
+
+                <ImageButton
+                    android:id="@+id/back_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_arrow_back"
+                    android:contentDescription="Back button" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Configuraciones"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/profile"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/profile"
+                    android:contentDescription="Profile image" />
+
+                <ImageButton
+                    android:id="@+id/camera_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignEnd="@id/profile_image"
+                    android:layout_alignBottom="@id/profile_image"
+                    android:background="@drawable/circle_background_white"
+                    android:src="@drawable/ic_camara"
+                    android:contentDescription="Camera icon" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:padding="16dp"
+                android:textStyle="bold"
+                android:text="Datos de Usuario"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_border" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_border"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="16dp"
+                    android:text="Nombre: "
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:gravity="left" />
+
+                <TextView
+                    android:id="@+id/user_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="16dp"
+                    android:text="Email: "
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:gravity="left" />
+
+                <TextView
+                    android:id="@+id/user_registration_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="16dp"
+                    android:text="Fecha de Registro: "
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:gravity="left" />
+
+                <TextView
+                    android:id="@+id/user_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="16dp"
+                    android:text="Tipo de Usuario: "
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:gravity="left" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:padding="16dp"
+                android:text="Configuraciones de la Aplicación"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_border" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        style="@style/RedButtonStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Configuración Fragmento"
-        android:textColor="@color/black"
-        android:textSize="26sp" />
+        android:layout_gravity="bottom"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_border_red"
+        android:text="Cerrar Sesión" />
 
-</FrameLayout>
+</LinearLayout>

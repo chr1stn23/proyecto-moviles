@@ -11,6 +11,9 @@ volley = "1.2.1"
 gson = "2.11.0"
 lombok = "1.18.32"
 picasso = "2.71828"
+retrofit = "2.9.0"
+retrofitConverterGson = "2.9.0"
+glide = "4.12.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -24,6 +27,8 @@ volley = { group = "com.android.volley", name = "volley", version.ref = "volley"
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofitConverterGson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitConverterGson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

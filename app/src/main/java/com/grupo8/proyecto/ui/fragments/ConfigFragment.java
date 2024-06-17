@@ -1,66 +1,103 @@
 package com.grupo8.proyecto.ui.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.grupo8.proyecto.R;
+import com.grupo8.proyecto.data.User;
+import com.squareup.picasso.Picasso;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ConfigFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ConfigFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RequestQueue requestQueue;
+    private TextView userName, userEmail, userRegistrationDate, userType;
+    private ImageView profileImage;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ConfigFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConfigFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ConfigFragment newInstance(String param1, String param2) {
-        ConfigFragment fragment = new ConfigFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_config, container, false);
+
+        userName = view.findViewById(R.id.user_name);
+        userEmail = view.findViewById(R.id.user_email);
+        userRegistrationDate = view.findViewById(R.id.user_registration_date);
+        userType = view.findViewById(R.id.user_type);
+        profileImage = view.findViewById(R.id.profile_image);
+
+        requestQueue = Volley.newRequestQueue(requireContext());
+        fetchUserData();
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_config, container, false);
+    private void fetchUserData() {
+        String url = "https://www.apirecursos.somee.com/api/v1/entities/GetUsers";
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject userObject = response.getJSONObject(0);
+
+                            User user = new User(
+                                    userObject.getInt("id"),
+                                    userObject.getString("nombre"),
+                                    userObject.getString("email"),
+                                    userObject.getString("fechaRegistro"),
+                                    userObject.getString("tipoUsuario"),
+                                    convertDriveUrl(userObject.getString("fotoPerfil"))
+                            );
+
+                            updateUI(user);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    private String convertDriveUrl(String driveUrl) {
+        // Extrae el ID del archivo de la URL original
+        String fileId = driveUrl.split("/d/")[1].split("/")[0];
+        // Crea una URL directa a la imagen
+        return "https://drive.google.com/uc?export=view&id=" + fileId;
+    }
+
+    private void updateUI(User user) {
+        userName.setText("Nombre: " + user.getNombre());
+        userEmail.setText("Email: " + user.getEmail());
+        userRegistrationDate.setText("Fecha de Registro: " + user.getFechaRegistro());
+        userType.setText("Tipo de Usuario: " + user.getTipoUsuario());
+        Picasso.get().load(user.getFotoPerfil()).into(profileImage);
     }
 }
