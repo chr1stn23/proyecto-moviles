@@ -44,7 +44,11 @@ dependencies {
     implementation(libs.volley)
     implementation(libs.gson)
     implementation(libs.lombok)
+    implementation(libs.picasso)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitConverterGson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
 }
