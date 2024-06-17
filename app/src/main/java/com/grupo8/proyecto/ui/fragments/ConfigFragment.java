@@ -32,6 +32,7 @@ public class ConfigFragment extends Fragment {
     private TextView userName, userEmail, userRegistrationDate, userType;
     private ImageView profileImage;
     private Button cerrarSesionButton;
+    private View msgCerrarView;
 
     @Nullable
     @Override
@@ -51,7 +52,7 @@ public class ConfigFragment extends Fragment {
         cerrarSesionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cerrarSesion();
+                mostrarConfirmacionCerrarSesion();
             }
         });
 
@@ -112,9 +113,54 @@ public class ConfigFragment extends Fragment {
         Picasso.get().load(user.getFotoPerfil()).into(profileImage);
     }
 
+    private void mostrarConfirmacionCerrarSesion() {
+        // Inflar la vista de confirmación msg_cerrar.xml
+        if (msgCerrarView == null) {
+            LayoutInflater inflater = LayoutInflater.from(requireContext());
+            msgCerrarView = inflater.inflate(R.layout.msg_cerrar, (ViewGroup) requireView(), false);
+
+            // Configurar botones de la vista de confirmación
+            Button buttonYes = msgCerrarView.findViewById(R.id.button_yes);
+            Button buttonCancel = msgCerrarView.findViewById(R.id.button_cancel);
+
+            buttonYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cerrarSesion();
+                }
+            });
+
+            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Remover la vista de confirmación
+                    ViewGroup parent = (ViewGroup) msgCerrarView.getParent();
+                    if (parent != null) {
+                        parent.removeView(msgCerrarView);
+                    }
+                    msgCerrarView = null;
+                }
+            });
+
+            // Agregar la vista de confirmación al contenedor principal
+            ViewGroup root = (ViewGroup) requireView();
+            root.addView(msgCerrarView);
+        }
+    }
+
     private void cerrarSesion() {
         // Llamar al método de cerrar sesión en MainActivity
         MainActivity mainActivity = (MainActivity) requireActivity();
         mainActivity.cerrarSesion();
+
+        // Limpiar la vista de confirmación
+        ViewGroup parent = (ViewGroup) msgCerrarView.getParent();
+        if (parent != null) {
+            parent.removeView(msgCerrarView);
+        }
+        msgCerrarView = null;
     }
+
+
+
 }
