@@ -2,6 +2,8 @@ package com.grupo8.proyecto.ui.fragments;
 
 import static com.grupo8.proyecto.data.Contants.BASE_URL;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -46,6 +48,7 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
     public InicioFragment() {
         // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -1,5 +1,12 @@
 <resources>
-    <style name="RedButtonStyle">
+    <style name="Theme.MyApp" parent="Theme.AppCompat.DayNight">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="RedButtonStyle" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="android:background">@drawable/rounded_border_red</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">16sp</item>

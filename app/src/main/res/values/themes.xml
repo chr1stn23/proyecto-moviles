@@ -7,4 +7,6 @@
     </style>
 
     <style name="Theme.Proyecto" parent="Base.Theme.Proyecto" />
+
+
 </resources>

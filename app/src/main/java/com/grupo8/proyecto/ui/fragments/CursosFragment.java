@@ -1,5 +1,7 @@
 package com.grupo8.proyecto.ui.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,7 +17,7 @@ import com.grupo8.proyecto.R;
  * Use the {@link CursosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CursosFragment extends Fragment {
+public class CursosFragment extends BaseFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,12 +57,14 @@ public class CursosFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cursos, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_cursos, container, false);
+        return rootView;
     }
 }
