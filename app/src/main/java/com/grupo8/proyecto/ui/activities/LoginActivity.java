@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean("sesionIniciada", true);
+                    editor.putInt("userId", u.getId()); // Guarda el ID del usuario
                     editor.apply();
                     Log.i(null, "Usuario encontrado");
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
