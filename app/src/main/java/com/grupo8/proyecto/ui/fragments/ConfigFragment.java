@@ -27,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 import com.grupo8.proyecto.MainActivity;
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.User;
+import com.grupo8.proyecto.utils.UserDataUtil;
 import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,8 +57,23 @@ public class ConfigFragment extends BaseFragment {
         cerrarSesionButton = view.findViewById(R.id.btn_cerrar_sesion);
         themeSwitch = view.findViewById(R.id.theme_switch);
 
-        requestQueue = Volley.newRequestQueue(requireContext());
-        fetchUserData();
+        //Manejar datos del header
+        UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
+            @Override
+            public void onUserDataLoaded(User user) {
+                //Cargar datos del usuario
+                userName.setText("Nombre: " + user.getNombre());
+                userEmail.setText("Email: " + user.getEmail());
+                userRegistrationDate.setText("F. Registro: " + user.getFechaRegistro());
+                userType.setText("Tipo de Usuario: " + user.getTipoUsuario());
+                Picasso.get().load(user.getFotoPerfil()).into(profileImage);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         //Configurar modo oscuro
         // Inicializar SharedPreferences
@@ -92,45 +108,7 @@ public class ConfigFragment extends BaseFragment {
         return view;
     }
 
-    /*private void fetchUserData() {
-        String url = "https://www.apirecursos.somee.com/api/v1/entities/GetUsers";
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            JSONObject userObject = response.getJSONObject(0);
-
-                            User user = new User(
-                                    userObject.getInt("id"),
-                                    userObject.getString("nombre"),
-                                    userObject.getString("email"),
-                                    userObject.getString("fechaRegistro"),
-                                    userObject.getString("tipoUsuario"),
-                                    convertDriveUrl(userObject.getString("fotoPerfil"))
-                            );
-
-                            updateUI(user);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                }
-        );
-
-        requestQueue.add(jsonArrayRequest);
-    }*/
-
+    /*
     private void fetchUserData() {
         SharedPreferences prefs = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
         int userId = prefs.getInt("userId", -1);
@@ -194,6 +172,7 @@ public class ConfigFragment extends BaseFragment {
         userType.setText("Tipo de Usuario: " + user.getTipoUsuario());
         Picasso.get().load(user.getFotoPerfil()).into(profileImage);
     }
+     */
 
     private void mostrarConfirmacionCerrarSesion() {
         // Inflar la vista de confirmación msg_cerrar.xml

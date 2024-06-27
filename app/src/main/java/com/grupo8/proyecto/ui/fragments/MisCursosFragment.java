@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.User;
+import com.grupo8.proyecto.utils.UserDataUtil;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -69,8 +70,22 @@ public class MisCursosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mis_cursos, container, false);
 
-        requestQueue = Volley.newRequestQueue(requireContext());
-        fetchUserData();
+
+        //Manejar datos del header
+        UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
+            @Override
+            public void onUserDataLoaded(User user) {
+                // Actualizar nombre de usuario
+                userName.setText("Hola, " + user.getNombre());
+                //Cargar imagen de perfil
+                Picasso.get().load(user.getFotoPerfil()).into(userImageView);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         return view;
     }
@@ -107,65 +122,5 @@ public class MisCursosFragment extends Fragment {
         });
     }
 
-    private void fetchUserData() {
-        SharedPreferences prefs = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
-        int userId = prefs.getInt("userId", -1);
 
-        if (userId != -1) {
-            String url = "https://www.apirecursos.somee.com/api/v1/entities/GetUsers";
-
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                    Request.Method.GET,
-                    url,
-                    null,
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            try {
-                                for (int i = 0; i < response.length(); i++) {
-                                    JSONObject userObject = response.getJSONObject(i);
-                                    if (userObject.getInt("id") == userId) {
-                                        User user = new User(
-                                                userObject.getInt("id"),
-                                                userObject.getString("nombre"),
-                                                userObject.getString("email"),
-                                                userObject.getString("fechaRegistro"),
-                                                userObject.getString("tipoUsuario"),
-                                                convertDriveUrl(userObject.getString("fotoPerfil"))
-                                        );
-
-                                        updateUI(user);
-                                        break;
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
-                        }
-                    }
-            );
-
-            requestQueue.add(jsonArrayRequest);
-        }
-    }
-
-    private String convertDriveUrl(String driveUrl) {
-        // Extrae el ID del archivo de la URL original
-        String fileId = driveUrl.split("/d/")[1].split("/")[0];
-        // Crea una URL directa a la imagen
-        return "https://drive.google.com/uc?export=view&id=" + fileId;
-    }
-
-    private void updateUI(User user) {
-        userName.setText("Hola, " + user.getNombre());
-        Picasso.get().load(user.getFotoPerfil()).into(userImageView);
-    }
-
-
-}
+}//Fin clase

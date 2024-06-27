@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +28,10 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.Blog;
+import com.grupo8.proyecto.data.User;
 import com.grupo8.proyecto.ui.adapters.BlogAdapter;
+import com.grupo8.proyecto.utils.UserDataUtil;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +48,8 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
     private RecyclerView inicioRecyclerView;
     private BlogAdapter blogAdapter;
     private SearchView searchView;
+    private ImageView userImageView;
+    private TextView userName;
 
     public InicioFragment() {
         // Required empty public constructor
@@ -62,6 +68,26 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
         filteredBlogList = new ArrayList<>();
         blogAdapter = new BlogAdapter(filteredBlogList, this);
         inicioRecyclerView.setAdapter(blogAdapter);
+        // Datos del Header
+        userImageView = rootView.findViewById(R.id.userImage);
+        userName = rootView.findViewById(R.id.txtNombre);;
+
+        //Manejar datos del header
+        UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
+            @Override
+            public void onUserDataLoaded(User user) {
+                // Actualizar nombre de usuario
+                userName.setText("Hola, " + user.getNombre());
+                //Cargar imagen de perfil
+                Picasso.get().load(user.getFotoPerfil()).into(userImageView);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+
 
         searchView = rootView.findViewById(R.id.busqueda);
 
