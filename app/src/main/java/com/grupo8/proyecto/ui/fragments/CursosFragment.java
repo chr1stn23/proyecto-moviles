@@ -1,6 +1,8 @@
 package com.grupo8.proyecto.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -21,6 +23,10 @@ import com.squareup.picasso.Picasso;
 
 import com.grupo8.proyecto.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 
 public class CursosFragment extends BaseFragment {
@@ -31,7 +37,7 @@ public class CursosFragment extends BaseFragment {
     private String mParam1;
     private String mParam2;
     private TextView userName;
-    private ImageView userImageView;
+    private ImageView userImageView, notificationBell;
 
     public CursosFragment() {
         // Required empty public constructor
@@ -61,6 +67,8 @@ public class CursosFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cursos, container, false);
 
+        notificationBell = view.findViewById(R.id.userNotificationBell);
+
         //Manejar datos del header
         UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
             @Override
@@ -77,6 +85,23 @@ public class CursosFragment extends BaseFragment {
             }
         });
 
+        notificationBell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserDataUtil.fetchNotifications(requireContext(), new UserDataUtil.NotificationsCallback() {
+                    @Override
+                    public void onNotificationsLoaded(JSONArray notifications) {
+                        showNotifications(notifications);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+
         return view;
     }
 
@@ -86,7 +111,35 @@ public class CursosFragment extends BaseFragment {
 
         userImageView = view.findViewById(R.id.userImage);
         userName = view.findViewById(R.id.txtNombre);
+        notificationBell = view.findViewById(R.id.userNotificationBell);
 
+    }
+
+    private void showNotifications(JSONArray notifications) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Notificaciones");
+
+        StringBuilder message = new StringBuilder();
+        for (int i = 0; i < notifications.length(); i++) {
+            try {
+                JSONObject notification = notifications.getJSONObject(i);
+                message.append(notification.getString("mensaje")).append("\n\n");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        builder.setMessage(message.toString());
+
+        builder.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 

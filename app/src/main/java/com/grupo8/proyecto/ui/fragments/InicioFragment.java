@@ -2,7 +2,9 @@ package com.grupo8.proyecto.ui.fragments;
 
 import static com.grupo8.proyecto.data.Contants.BASE_URL;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -48,7 +50,7 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
     private RecyclerView inicioRecyclerView;
     private BlogAdapter blogAdapter;
     private SearchView searchView;
-    private ImageView userImageView;
+    private ImageView userImageView, notificationBell;
     private TextView userName;
 
     public InicioFragment() {
@@ -61,6 +63,10 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_inicio, container, false);
+
+        userImageView = rootView.findViewById(R.id.userImage);
+        userName = rootView.findViewById(R.id.txtNombre);
+        notificationBell = rootView.findViewById(R.id.userNotificationBell);
 
         inicioRecyclerView = rootView.findViewById(R.id.homeRecyclerView);
         inicioRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -88,6 +94,23 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
             }
         });
 
+        notificationBell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserDataUtil.fetchNotifications(requireContext(), new UserDataUtil.NotificationsCallback() {
+                    @Override
+                    public void onNotificationsLoaded(JSONArray notifications) {
+                        showNotifications(notifications);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+
 
         searchView = rootView.findViewById(R.id.busqueda);
 
@@ -108,6 +131,33 @@ public class InicioFragment extends Fragment implements BlogAdapter.OnItemClickL
 
         loadBlogsFromApi();
         return rootView;
+    }
+
+    private void showNotifications(JSONArray notifications) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Notificaciones");
+
+        StringBuilder message = new StringBuilder();
+        for (int i = 0; i < notifications.length(); i++) {
+            try {
+                JSONObject notification = notifications.getJSONObject(i);
+                message.append(notification.getString("mensaje")).append("\n\n");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        builder.setMessage(message.toString());
+
+        builder.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void loadBlogsFromApi() {

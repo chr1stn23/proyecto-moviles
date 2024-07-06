@@ -25,6 +25,11 @@ public class UserDataUtil {
         void onError(Exception e);
     }
 
+    public interface NotificationsCallback {
+        void onNotificationsLoaded(JSONArray notifications);
+        void onError(Exception e);
+    }
+
     public static void fetchUserData(Context context, UserDataCallback callback) {
         SharedPreferences prefs = context.getSharedPreferences("sesion", Context.MODE_PRIVATE);
         int userId = prefs.getInt("userId", -1);
@@ -71,6 +76,31 @@ public class UserDataUtil {
 
             requestQueue.add(jsonArrayRequest);
         }
+    }
+
+    public static void fetchNotifications(Context context, NotificationsCallback callback) {
+        String url = "https://www.apirecursos.somee.com/api/v1/entities/GetNotifications";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        callback.onNotificationsLoaded(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
     }
 
     private static String convertDriveUrl(String driveUrl) {

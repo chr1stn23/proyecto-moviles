@@ -28,9 +28,20 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
             android:src="@drawable/profile"
             android:background="@drawable/profile"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:backgroundTint="#000000" />
+
+        <ImageView
+            android:id="@+id/userNotificationBell"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_toLeftOf="@id/userImage"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/bell"
+            android:background="@drawable/bell"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             android:backgroundTint="#000000" />

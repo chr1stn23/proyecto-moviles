@@ -1,6 +1,8 @@
 package com.grupo8.proyecto.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -41,7 +43,7 @@ public class MisCursosFragment extends Fragment {
     private CalendarView calendarView;
     private TextView coursesTextView, userName;
     private TextView workshopsTextView;
-    private ImageView userImageView;
+    private ImageView userImageView, notificationBell;
 
     public MisCursosFragment() {
         // Required empty public constructor
@@ -70,6 +72,10 @@ public class MisCursosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mis_cursos, container, false);
 
+        userImageView = view.findViewById(R.id.userImage);
+        userName = view.findViewById(R.id.txtNombre);
+        notificationBell = view.findViewById(R.id.userNotificationBell);
+
 
         //Manejar datos del header
         UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
@@ -84,6 +90,23 @@ public class MisCursosFragment extends Fragment {
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
+            }
+        });
+
+        notificationBell.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserDataUtil.fetchNotifications(requireContext(), new UserDataUtil.NotificationsCallback() {
+                    @Override
+                    public void onNotificationsLoaded(JSONArray notifications) {
+                        showNotifications(notifications);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         });
 
@@ -120,6 +143,33 @@ public class MisCursosFragment extends Fragment {
                 workshopsTextView.setText("Talleres para " + selectedDate);
             }
         });
+    }
+
+    private void showNotifications(JSONArray notifications) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Notificaciones");
+
+        StringBuilder message = new StringBuilder();
+        for (int i = 0; i < notifications.length(); i++) {
+            try {
+                JSONObject notification = notifications.getJSONObject(i);
+                message.append(notification.getString("mensaje")).append("\n\n");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        builder.setMessage(message.toString());
+
+        builder.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
