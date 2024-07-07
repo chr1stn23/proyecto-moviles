@@ -30,6 +30,9 @@
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="true"></activity>
+        <activity android:name=".ui.activities.DetailActivity">
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:configChanges="uiMode|screenSize|orientation"

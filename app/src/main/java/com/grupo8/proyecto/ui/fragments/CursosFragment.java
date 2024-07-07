@@ -73,7 +73,7 @@ public class CursosFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         itemList = new ArrayList<>();
-        adapter = new CursoTallerAdapter(itemList);
+        adapter = new CursoTallerAdapter(itemList, getContext());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);

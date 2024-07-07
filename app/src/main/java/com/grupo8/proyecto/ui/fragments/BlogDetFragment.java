@@ -88,4 +88,4 @@ public class BlogDetFragment extends Fragment {
             return fecha;
         }
     }
-}
+}//Fin clase

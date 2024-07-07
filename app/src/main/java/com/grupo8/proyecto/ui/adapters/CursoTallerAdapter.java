@@ -1,5 +1,7 @@
 package com.grupo8.proyecto.ui.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.Course;
 import com.grupo8.proyecto.data.Taller;
+import com.grupo8.proyecto.ui.activities.DetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -23,10 +26,12 @@ public class CursoTallerAdapter extends RecyclerView.Adapter<CursoTallerAdapter.
 
     private List<Object> itemList;
     private List<Object> itemListFull;
+    private Context context;
 
-    public CursoTallerAdapter(List<Object> itemList) {
+    public CursoTallerAdapter(List<Object> itemList, Context context) {
         this.itemList = itemList;
         this.itemListFull = new ArrayList<>(itemList);
+        this.context = context;
     }
 
     @Override
@@ -58,11 +63,37 @@ public class CursoTallerAdapter extends RecyclerView.Adapter<CursoTallerAdapter.
             holder.title.setText(curso.getTitle());
             holder.description.setText(curso.getDescription());
             Picasso.get().load(curso.getUrlImage()).into(holder.imageView);
+
+            //Manejar clic en cada item
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("title", curso.getTitle());
+                intent.putExtra("imageUrl", curso.getUrlImage());
+                intent.putExtra("description", curso.getDescription());
+                intent.putExtra("duration", curso.getDuration());
+                intent.putExtra("date", curso.getStartDate());
+                intent.putExtra("dateEnd", curso.getEndDate());
+                intent.putExtra("location", ""); // Los cursos no tienen ubicación
+                context.startActivity(intent);
+            });
         } else if (itemList.get(position) instanceof Taller) {
             Taller taller = (Taller) itemList.get(position);
             holder.title.setText(taller.getTitle());
             holder.description.setText(taller.getDescription());
             Picasso.get().load(taller.getUrlImage()).into(holder.imageView);
+
+            //Manejar clic en cada item
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra("title", taller.getTitle());
+                intent.putExtra("imageUrl", taller.getUrlImage());
+                intent.putExtra("description", taller.getDescription());
+                intent.putExtra("duration", taller.getDuration());
+                intent.putExtra("date", taller.getDate());
+                intent.putExtra("dateEnd", "");//los talleres son de fecha unica
+                intent.putExtra("location", taller.getUbication());
+                context.startActivity(intent);
+            });
         }
     }
 
