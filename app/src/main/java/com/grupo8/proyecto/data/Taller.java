@@ -11,24 +11,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Course {
+public class Taller {
 
     @EqualsAndHashCode.Include
     private int id;
     private String title;
     private String urlImage;
     private int duration;
-    private String startDate;
-    private String endDate;
+    private int tipe;
+    private String ubication;
+    private String date;
     private String description;
 
-    public Course(int id, String title, String urlImage, int duration, String startDate, String endDate, String description) {
+    public Taller(int id, String title, String urlImage, int duration, int tipe, String ubication, String date, String description) {
         this.id = id;
         this.title = title;
         this.urlImage = urlImage;
         this.duration = duration;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.tipe = tipe;
+        this.ubication = ubication;
+        this.date = date;
         this.description = description;
     }
 
@@ -64,20 +66,28 @@ public class Course {
         this.duration = duration;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public int getTipe() {
+        return tipe;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setTipe(int tipe) {
+        this.tipe = tipe;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public String getUbication() {
+        return ubication;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setUbication(String ubication) {
+        this.ubication = ubication;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getDescription() {

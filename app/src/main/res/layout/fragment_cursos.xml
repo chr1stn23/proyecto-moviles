@@ -46,7 +46,7 @@
             android:backgroundTint="#000000" />
     </RelativeLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/mainContentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -70,6 +70,53 @@
                 android:textStyle="bold"
                 android:textSize="20sp" />
         </androidx.appcompat.widget.Toolbar>
+
+        <SearchView
+            android:id="@+id/busqueda"
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_margin="10sp"
+            android:queryHint="Buscar por Titulo o Autor" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
+    </LinearLayout>
+    -->
+
+    <LinearLayout
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#FFFFFF"
+        android:layout_below="@id/headerLayout">
+
+        <Button
+            android:id="@+id/nav_cursos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cursos" />
+
+        <Button
+            android:id="@+id/nav_talleres"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Talleres" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mainContentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@id/navigationBar">
 
         <SearchView
             android:id="@+id/busqueda"

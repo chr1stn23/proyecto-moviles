@@ -3,6 +3,7 @@ package com.grupo8.proyecto.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -17,6 +18,11 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class UserDataUtil {
 
@@ -103,8 +109,38 @@ public class UserDataUtil {
         requestQueue.add(jsonArrayRequest);
     }
 
-    private static String convertDriveUrl(String driveUrl) {
+    public static String convertDriveUrl(String driveUrl) {
         String fileId = driveUrl.split("/d/")[1].split("/")[0];
         return "https://drive.google.com/uc?export=view&id=" + fileId;
     }
-}
+
+    public static void fetchDataFromApi(Context context, String urlString, ApiCallback callback) {
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                urlString,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        callback.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public interface ApiCallback {
+        void onSuccess(JSONArray response);
+        void onError(Exception e);
+    }
+
+}//Fin clase
