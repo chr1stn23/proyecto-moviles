@@ -1,6 +1,7 @@
 package com.grupo8.proyecto.ui.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.grupo8.proyecto.R;
 import com.grupo8.proyecto.data.Taller;
+import com.grupo8.proyecto.ui.activities.DetailActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,6 +41,21 @@ public class MisTalleresAdapter extends RecyclerView.Adapter<MisTalleresAdapter.
         holder.itemTitle.setText(taller.getTitle());
         // Aquí cargarías la imagen usando Picasso o Glide
         Picasso.get().load(taller.getUrlImage()).into(holder.itemImage);
+
+        //Manejar clic en cada item
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("tallerId", taller.getId());
+            intent.putExtra("title", taller.getTitle());
+            intent.putExtra("imageUrl", taller.getUrlImage());
+            intent.putExtra("description", taller.getDescription());
+            intent.putExtra("duration", taller.getDuration());
+            intent.putExtra("date", taller.getDate());
+            intent.putExtra("dateEnd", "");//los talleres son de fecha unica
+            intent.putExtra("location", taller.getUbication());
+            context.startActivity(intent);
+        });
+
     }
 
     @Override
