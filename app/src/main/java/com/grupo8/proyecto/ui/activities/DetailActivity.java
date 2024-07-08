@@ -205,7 +205,10 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
-                response -> Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show(),
+                response -> {
+                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    checkIfCourseRegistered();
+                },
                 error -> {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
                         Toast.makeText(this, "Solicitud incorrecta", Toast.LENGTH_SHORT).show();
@@ -232,7 +235,10 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData,
-                response -> Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show(),
+                response -> {
+                    Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                    checkIfTallerRegistered();
+                },
                 error -> {
                     if (error.networkResponse != null && error.networkResponse.statusCode == 400) {
                         Toast.makeText(this, "Solicitud incorrecta", Toast.LENGTH_SHORT).show();
