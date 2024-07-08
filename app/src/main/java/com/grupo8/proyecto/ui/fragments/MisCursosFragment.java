@@ -16,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,7 +26,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.grupo8.proyecto.R;
+import com.grupo8.proyecto.data.Course;
+import com.grupo8.proyecto.data.Taller;
 import com.grupo8.proyecto.data.User;
+import com.grupo8.proyecto.ui.adapters.CursoTallerAdapter;
+import com.grupo8.proyecto.ui.adapters.MisCursosAdapter;
+import com.grupo8.proyecto.ui.adapters.MisTalleresAdapter;
 import com.grupo8.proyecto.utils.UserDataUtil;
 import com.squareup.picasso.Picasso;
 
@@ -32,7 +39,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class MisCursosFragment extends Fragment {
 
@@ -45,6 +54,12 @@ public class MisCursosFragment extends Fragment {
     private TextView workshopsTextView;
     private ImageView userImageView, notificationBell;
 
+    private List<Course> cursosList;
+    private List<Taller> talleresList;
+    private RecyclerView cursosRecyclerView;
+    private RecyclerView talleresRecyclerView;
+    private MisCursosAdapter cursosAdapter;
+    private MisTalleresAdapter talleresAdapter;
     public MisCursosFragment() {
         // Required empty public constructor
     }
@@ -71,6 +86,8 @@ public class MisCursosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mis_cursos, container, false);
+
+        requestQueue = Volley.newRequestQueue(requireContext());
 
         userImageView = view.findViewById(R.id.userImage);
         userName = view.findViewById(R.id.txtNombre);
@@ -109,6 +126,23 @@ public class MisCursosFragment extends Fragment {
                 });
             }
         });
+
+        // Inicialización de RecyclerViews y adaptadores
+        cursosList = new ArrayList<>();
+        talleresList = new ArrayList<>();
+        cursosRecyclerView = view.findViewById(R.id.cursosRecyclerView);
+        talleresRecyclerView = view.findViewById(R.id.talleresRecyclerView);
+        cursosAdapter = new MisCursosAdapter(requireContext(), cursosList);
+        talleresAdapter = new MisTalleresAdapter(requireContext(), talleresList);
+
+        cursosRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        talleresRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        cursosRecyclerView.setAdapter(cursosAdapter);
+        talleresRecyclerView.setAdapter(talleresAdapter);
+
+        // Cargar cursos y talleres
+        loadCursos();
+        loadTalleres();
 
         return view;
     }
@@ -170,6 +204,91 @@ public class MisCursosFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void loadCursos() {
+        int userId = getUserIdFromSharedPreferences(); // Obtener el ID de usuario guardado
+        String url = "https://www.apirecursos.somee.com/api/v1/entities/GetCursosbyUser?idusuario=" + userId;
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        cursosList.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                JSONObject cursoObject = jsonObject.getJSONObject("curso");
+                                Course curso = new Course(
+                                        cursoObject.getInt("id"),
+                                        cursoObject.getString("titulo"),
+                                        cursoObject.getString("urlImagen"),
+                                        cursoObject.getInt("duracion"),
+                                        cursoObject.getString("fechaInicio"),
+                                        cursoObject.getString("fechaFin"),
+                                        cursoObject.getString("descripcion")
+                                );
+                                cursosList.add(curso);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        cursosAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        requestQueue.add(request);
+    }
+
+    private void loadTalleres() {
+        int userId = getUserIdFromSharedPreferences(); // Obtener el ID de usuario guardado
+        String url = "https://www.apirecursos.somee.com/api/v1/entities/GetTallerbyUser?idusuario=" + userId;
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        talleresList.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                JSONObject tallerObject = jsonObject.getJSONObject("taller");
+                                Taller taller = new Taller(
+                                        tallerObject.getInt("id"),
+                                        tallerObject.getString("titulo"),
+                                        UserDataUtil.convertDriveUrl(tallerObject.getString("urlImagen")),
+                                        tallerObject.getInt("duracion"),
+                                        tallerObject.getInt("tipo"),
+                                        tallerObject.getString("ubicacion"),
+                                        tallerObject.getString("fecha"),
+                                        tallerObject.getString("descripcion")
+                                );
+                                talleresList.add(taller);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        talleresAdapter.notifyDataSetChanged();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        requestQueue.add(request);
+    }
+
+    // Método para obtener el ID de usuario guardado en SharedPreferences
+    private int getUserIdFromSharedPreferences() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        return prefs.getInt("userId", -1); // -1 como valor por defecto si no se encuentra
     }
 
 
