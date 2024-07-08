@@ -9,6 +9,7 @@
         android:id="@+id/detail_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:src="@drawable/blog_thumbnail"
         android:scaleType="centerCrop" />
 
     <TextView
