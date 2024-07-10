@@ -3,32 +3,49 @@ package com.grupo8.proyecto.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.grupo8.proyecto.R;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageView imageView;
     private TextView titleTextView;
@@ -37,6 +54,12 @@ public class DetailActivity extends AppCompatActivity {
     private TextView dateTextView;
     private TextView dateEndTextView;
     private TextView locationTextView;
+
+
+    private MapView mapView;
+    private GoogleMap googleMap;
+
+
     private Button registerButton;
     private Button deleteButton;
     private int userId;
@@ -65,6 +88,11 @@ public class DetailActivity extends AppCompatActivity {
         locationTextView = findViewById(R.id.detail_location);
         registerButton = findViewById(R.id.detail_register_button);
         deleteButton = findViewById(R.id.detail_delete_button);
+
+        mapView = findViewById(R.id.map_view);
+
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
 
         deleteButton.setEnabled(false);
         deleteButton.setVisibility(View.INVISIBLE);
@@ -97,6 +125,9 @@ public class DetailActivity extends AppCompatActivity {
 
             dateEndTextView.setEnabled(false);
 
+            // Mostrar mapa
+            mapView.setVisibility(View.VISIBLE);
+
             //verificar que el taller este registrado
             checkIfTallerRegistered();
         }else if (!Objects.equals(dateEnd, "")){
@@ -115,6 +146,88 @@ public class DetailActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap map) {
+        googleMap = map;
+
+        // Obtener la ubicación del taller
+        String location = getIntent().getStringExtra("location");
+        if (location != null && !location.isEmpty()) {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(location, 1);
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    LatLng workshopLocation = new LatLng(address.getLatitude(), address.getLongitude());
+
+                    // Obtener la ubicación actual del usuario
+                    FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                        return;
+                    }
+                    fusedLocationClient.getLastLocation().addOnSuccessListener(this, location1 -> {
+                        if (location1 != null) {
+                            LatLng userLocation = new LatLng(location1.getLatitude(), location1.getLongitude());
+
+                            // Agregar marcadores y trazar la ruta
+                            googleMap.addMarker(new MarkerOptions().position(workshopLocation).title("Ubicación del Taller"));
+                            googleMap.addMarker(new MarkerOptions().position(userLocation).title("Tu Ubicación"));
+                            googleMap.addPolyline(new PolylineOptions().add(userLocation, workshopLocation));
+
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(workshopLocation, 12));
+                        } else {
+                            Toast.makeText(this, "No se pudo obtener la ubicación actual", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "No se pudo encontrar la ubicación del taller", Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error al obtener la ubicación del taller", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, intentar obtener la ubicación de nuevo
+                onMapReady(googleMap);
+            } else {
+                Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     private void checkIfCourseRegistered() {

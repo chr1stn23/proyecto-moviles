@@ -59,8 +59,8 @@
 
                 <ImageButton
                     android:id="@+id/camera_icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignEnd="@id/profile_image"
                     android:layout_alignBottom="@id/profile_image"
                     android:background="@drawable/circle_background_white"
