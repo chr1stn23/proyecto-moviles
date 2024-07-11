@@ -21,6 +21,7 @@ public class Course {
     private String startDate;
     private String endDate;
     private String description;
+    private String registerDate;
 
     public Course(int id, String title, String urlImage, int duration, String startDate, String endDate, String description) {
         this.id = id;
@@ -88,5 +89,11 @@ public class Course {
         this.description = description;
     }
 
+    public String getRegisterDate() {
+        return registerDate;
+    }
 
+    public void setRegisterDate(String registerDate) {
+        this.registerDate = registerDate;
+    }
 }//Fin clase

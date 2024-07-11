@@ -14,7 +14,6 @@ picasso = "2.71828"
 retrofit = "2.9.0"
 retrofitConverterGson = "2.9.0"
 glide = "4.12.0"
-#materialCalendarView = "1.4.3"
 playServicesMaps = "18.0.2"
 playServicesLocation = "21.0.1"
 
@@ -34,8 +33,6 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofitConverterGson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitConverterGson" }
 playServicesMaps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 playServicesLocation = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
-#materialCalendarView = { group = "com.prolificinteractive", name = "material-calendarview", version.ref = "materialCalendarView" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

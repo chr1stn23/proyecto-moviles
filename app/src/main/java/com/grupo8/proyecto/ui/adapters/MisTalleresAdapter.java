@@ -39,7 +39,6 @@ public class MisTalleresAdapter extends RecyclerView.Adapter<MisTalleresAdapter.
         Taller taller = talleresList.get(position);
 
         holder.itemTitle.setText(taller.getTitle());
-        // Aquí cargarías la imagen usando Picasso o Glide
         Picasso.get().load(taller.getUrlImage()).into(holder.itemImage);
 
         //Manejar clic en cada item
@@ -66,7 +65,6 @@ public class MisTalleresAdapter extends RecyclerView.Adapter<MisTalleresAdapter.
     public static class TalleresViewHolder extends RecyclerView.ViewHolder {
         ImageView itemImage;
         TextView itemTitle;
-
         public TalleresViewHolder(@NonNull View itemView) {
             super(itemView);
             itemImage = itemView.findViewById(R.id.item_image);

@@ -48,12 +48,10 @@ public class MisCursosFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private RequestQueue requestQueue;
-
     private CalendarView calendarView;
     private TextView coursesTextView, userName;
     private TextView workshopsTextView;
     private ImageView userImageView, notificationBell;
-
     private List<Course> cursosList;
     private List<Taller> talleresList;
     private RecyclerView cursosRecyclerView;
@@ -92,7 +90,6 @@ public class MisCursosFragment extends Fragment {
         userImageView = view.findViewById(R.id.userImage);
         userName = view.findViewById(R.id.txtNombre);
         notificationBell = view.findViewById(R.id.userNotificationBell);
-
 
         //Manejar datos del header
         UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
@@ -222,7 +219,7 @@ public class MisCursosFragment extends Fragment {
                                 Course curso = new Course(
                                         cursoObject.getInt("id"),
                                         cursoObject.getString("titulo"),
-                                        cursoObject.getString("urlImagen"),
+                                        UserDataUtil.convertDriveUrl(cursoObject.getString("urlImagen")),
                                         cursoObject.getInt("duracion"),
                                         cursoObject.getString("fechaInicio"),
                                         cursoObject.getString("fechaFin"),

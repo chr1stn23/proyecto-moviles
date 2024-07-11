@@ -207,7 +207,7 @@ public class CursosFragment extends BaseFragment {
                         Course curso = new Course(
                                 courseObject.getInt("id"),
                                 courseObject.getString("titulo"),
-                                courseObject.getString("urlImagen"),
+                                UserDataUtil.convertDriveUrl(courseObject.getString("urlImagen")),
                                 courseObject.getInt("duracion"),
                                 courseObject.getString("fechaInicio"),
                                 courseObject.getString("fechaFin"),
