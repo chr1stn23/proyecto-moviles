@@ -118,18 +118,19 @@
         android:orientation="vertical"
         android:layout_below="@id/navigationBar">
 
-        <SearchView
+        <!--<SearchView
             android:id="@+id/busqueda"
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_margin="10sp"
-            android:queryHint="Buscar por Titulo o Autor" />
+            android:queryHint="Buscar por Titulo o Autor" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/homeRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:paddingTop="10dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp" />
     </LinearLayout>
