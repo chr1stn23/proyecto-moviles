@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         btnContinuar.setOnClickListener(this);
         txtRegistrar.setOnClickListener(this);
+        txtRegistrar.setEnabled(false);
+        txtRegistrar.setVisibility(View.INVISIBLE);
     }
 
     private void enlazarElementos(){

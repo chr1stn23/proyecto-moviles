@@ -39,8 +39,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MisCursosFragment extends Fragment {
@@ -54,6 +57,7 @@ public class MisCursosFragment extends Fragment {
     private ImageView userImageView, notificationBell;
     private List<Course> cursosList;
     private List<Taller> talleresList;
+    private List<Long> talleresDatesList; // Lista para almacenar las fechas de los talleres
     private RecyclerView cursosRecyclerView;
     private RecyclerView talleresRecyclerView;
     private MisCursosAdapter cursosAdapter;
@@ -78,6 +82,20 @@ public class MisCursosFragment extends Fragment {
             String mParam1 = getArguments().getString(ARG_PARAM1);
             String mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        // Inicializar la cola de solicitudes Volley
+        requestQueue = Volley.newRequestQueue(requireContext());
+
+        // Inicializar listas y adaptadores
+        cursosList = new ArrayList<>();
+        talleresList = new ArrayList<>();
+        talleresDatesList = new ArrayList<>(); // Inicializar lista de fechas de talleres
+        cursosAdapter = new MisCursosAdapter(requireContext(), cursosList);
+        talleresAdapter = new MisTalleresAdapter(requireContext(), talleresList);
+
+        // Cargar cursos y talleres
+        loadCursos();
+        loadTalleres();
     }
 
     @Override
@@ -85,19 +103,37 @@ public class MisCursosFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mis_cursos, container, false);
 
-        requestQueue = Volley.newRequestQueue(requireContext());
-
+        // Obtener referencias de vistas
         userImageView = view.findViewById(R.id.userImage);
         userName = view.findViewById(R.id.txtNombre);
         notificationBell = view.findViewById(R.id.userNotificationBell);
 
-        //Manejar datos del header
+        // Cargar datos del usuario y notificaciones
+        loadUserData();
+        setupNotificationClickListener();
+
+        // Configurar RecyclerViews
+        cursosRecyclerView = view.findViewById(R.id.cursosRecyclerView);
+        talleresRecyclerView = view.findViewById(R.id.talleresRecyclerView);
+        cursosRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        talleresRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        cursosRecyclerView.setAdapter(cursosAdapter);
+        talleresRecyclerView.setAdapter(talleresAdapter);
+
+        // Configurar CalendarView y sus listeners
+        setupCalendarView(view);
+
+        return view;
+    }
+
+    // Método para cargar datos del usuario
+    private void loadUserData() {
         UserDataUtil.fetchUserData(requireContext(), new UserDataUtil.UserDataCallback() {
             @Override
             public void onUserDataLoaded(User user) {
                 // Actualizar nombre de usuario
                 userName.setText("Hola, " + user.getNombre());
-                //Cargar imagen de perfil
+                // Cargar imagen de perfil
                 Picasso.get().load(user.getFotoPerfil()).into(userImageView);
             }
 
@@ -106,7 +142,10 @@ public class MisCursosFragment extends Fragment {
                 e.printStackTrace();
             }
         });
+    }
 
+    // Método para configurar el click listener del icono de notificación
+    private void setupNotificationClickListener() {
         notificationBell.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,57 +160,6 @@ public class MisCursosFragment extends Fragment {
                         e.printStackTrace();
                     }
                 });
-            }
-        });
-
-        // Inicialización de RecyclerViews y adaptadores
-        cursosList = new ArrayList<>();
-        talleresList = new ArrayList<>();
-        cursosRecyclerView = view.findViewById(R.id.cursosRecyclerView);
-        talleresRecyclerView = view.findViewById(R.id.talleresRecyclerView);
-        cursosAdapter = new MisCursosAdapter(requireContext(), cursosList);
-        talleresAdapter = new MisTalleresAdapter(requireContext(), talleresList);
-
-        cursosRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        talleresRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        cursosRecyclerView.setAdapter(cursosAdapter);
-        talleresRecyclerView.setAdapter(talleresAdapter);
-
-        // Cargar cursos y talleres
-        loadCursos();
-        loadTalleres();
-
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        calendarView = view.findViewById(R.id.calendarView);
-        coursesTextView = view.findViewById(R.id.courses);
-        workshopsTextView = view.findViewById(R.id.workshops);
-        userImageView = view.findViewById(R.id.userImage);
-        userName = view.findViewById(R.id.txtNombre);
-
-
-
-        long today = Calendar.getInstance().getTimeInMillis();
-        calendarView.setMinDate(today);
-
-
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                // Highlight the selected date
-                Calendar selectedDateCalendar = Calendar.getInstance();
-                selectedDateCalendar.set(year, month, dayOfMonth);
-                calendarView.setDate(selectedDateCalendar.getTimeInMillis());
-
-
-                String selectedDate = dayOfMonth + "/" + (month + 1) + "/" + year;
-                coursesTextView.setText("Cursos para " + selectedDate);
-                workshopsTextView.setText("Talleres para " + selectedDate);
             }
         });
     }
@@ -201,6 +189,60 @@ public class MisCursosFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    // Método para configurar el CalendarView
+    private void setupCalendarView(View view) {
+        calendarView = view.findViewById(R.id.calendarView);
+        coursesTextView = view.findViewById(R.id.courses);
+        workshopsTextView = view.findViewById(R.id.workshops);
+
+        // Listener para el cambio de día seleccionado
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+                // Crear un objeto Calendar con la fecha seleccionada
+                Calendar selectedDateCalendar = Calendar.getInstance();
+                selectedDateCalendar.set(year, month, dayOfMonth);
+                long selectedDateMillis = selectedDateCalendar.getTimeInMillis();
+
+                // Verificar si la fecha seleccionada está en la lista de fechas de talleres
+                boolean isTallerDate = false;
+                for (long tallerDateMillis : talleresDatesList) {
+                    Calendar tallerCalendar = Calendar.getInstance();
+                    tallerCalendar.setTimeInMillis(tallerDateMillis);
+
+                    if (tallerCalendar.get(Calendar.YEAR) == year &&
+                            tallerCalendar.get(Calendar.MONTH) == month &&
+                            tallerCalendar.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
+                        isTallerDate = true;
+                        break;
+                    }
+                }
+
+                if (isTallerDate) {
+                    // Cambiar el color del texto del CalendarView para el día seleccionado
+                    workshopsTextView.setTextColor(Color.RED);
+
+                    // Actualizar textos según la fecha seleccionada
+                    coursesTextView.setText("Cursos para " + formatDate(dayOfMonth, month + 1, year));
+                    workshopsTextView.setText("¡HOY SE REALIZA UN TALLER!");
+                } else {
+                    // Restaurar el color del texto si no es un día de taller
+                    coursesTextView.setTextColor(Color.BLACK);
+                    workshopsTextView.setTextColor(Color.BLACK);
+
+                    // Actualizar textos según la fecha seleccionada
+                    coursesTextView.setText("Cursos para " + formatDate(dayOfMonth, month + 1, year));
+                    workshopsTextView.setText("Talleres para " + formatDate(dayOfMonth, month + 1, year));
+                }
+            }
+        });
+    }
+
+    // Método para formatear la fecha
+    private String formatDate(int day, int month, int year) {
+        return day + "/" + month + "/" + year;
     }
 
     private void loadCursos() {
@@ -251,6 +293,7 @@ public class MisCursosFragment extends Fragment {
                     @Override
                     public void onResponse(JSONArray response) {
                         talleresList.clear();
+                        talleresDatesList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
@@ -266,8 +309,16 @@ public class MisCursosFragment extends Fragment {
                                         tallerObject.getString("descripcion")
                                 );
                                 talleresList.add(taller);
+
+                                // Parsear y agregar la fecha del taller a la lista
+                                String fechaTaller = tallerObject.getString("fecha");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                Date date = sdf.parse(fechaTaller);
+                                talleresDatesList.add(date.getTime());
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
                             }
                         }
                         talleresAdapter.notifyDataSetChanged();
